@@ -1,0 +1,16 @@
+pulsar-best 2.3.1 — Silesia own-only
+
+Source (MIT): https://github.com/ceedot-rock/pulsar-best
+
+Silesia 12-file, compressed individually, DECODE_OK 12/12:
+
+56654942 2907 18482 2647 1886 2936 2947 1307 4719 5121 8948 4276 473  pulsar-best 2.3.1
+
+56,654,942 / 211,938,580 (0.2673).
+gzip-9 67,631,990 (12/12 win, matches Mahoney).
+bzip2-9 54,506,769 (0/12, +3.94%).
+
+Not a claim vs paq8px / cmix / zpaq-m5.
+AWARE+XZ1 47,752,368 is a disclosed host-xz wrap, not this crate.
+
+Submitted to Mahoney OSCB 2026-08-31.
