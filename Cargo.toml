@@ -1,0 +1,23 @@
+[package]
+name = "pulsar"
+version = "2.3.1"
+edition = "2021"
+description = "pulsar-best 2.3.1 own-only lossless compressor"
+license = "MIT"
+publish = false
+
+[lib]
+name = "pulsar"
+path = "src/lib.rs"
+
+[[bin]]
+name = "pulsar"
+path = "src/bin/pulsar.rs"
+
+[[bin]]
+name = "pulsar-bench"
+path = "src/bin/pulsar-bench.rs"
+
+[profile.release]
+lto = false
+codegen-units = 1

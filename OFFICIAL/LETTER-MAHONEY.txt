@@ -1,0 +1,31 @@
+To: mattmahoneyfl@gmail.com
+Subject: Silesia OSCB submission — pulsar-best 2.3.1 (56,654,942)
+
+Hello Matt,
+
+Please consider pulsar-best 2.3.1 for the Silesia Open Source Compression Benchmark.
+
+  https://github.com/ceedot-rock/pulsar-best
+  MIT, free download.
+
+Silesia, 12 files compressed individually, lossless DECODE_OK 12/12:
+
+  56654942 2907 18482 2647 1886 2936 2947 1307 4719 5121 8948 4276 473  pulsar-best 2.3.1
+
+Exact total 56,654,942 bytes. Raw 211,938,580.
+
+Same-host industry check matches your table:
+  gzip -9  67,631,990
+  bzip2    54,506,769
+
+Beats gzip on 12/12 files. Does not beat bzip2 (gap +3.94%).
+We are not claiming a rank against paq8px, cmix, or zpaq.
+
+Pipeline (winning path on every Silesia file): RLE-1 + sentinel BWT (900 KiB) + MTF + Wheeler RLE-0 + order-0 rANS. Encode also considers OZL2 and a small-file PZ22 candidate and keeps the smallest blob that roundtrips.
+
+We do not have an enwik9 run, so this is not an LTCB submission.
+
+Thank you,
+Corey Tasz
+ceedot-rock
+ceedotrock@gmail.com
