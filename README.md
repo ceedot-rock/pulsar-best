@@ -20,7 +20,7 @@ Compressor A (demonstrator). BW22 / OZL2 / PZ22 picker. No taught residual core.
 - Not the Drive-lock encoder (dickens 243,675 is a reference constant, not this output)
 - Not Autonoma / Blackjack production
 
-Commercial inquiries for the private engines: Slid Phi Labs / Corey Tasz.
+This tree is **GPL-3.0-or-later** from 2.4.0 (MIT through 2.3.1). Closed-source embedding: [COMMERCIAL.md](COMMERCIAL.md). Combined GC / AWARE stay proprietary. Commercial inquiries for the private engines: Slid Phi Labs / Corey Tasz. SoT: https://www.slidphilabs.com/licensing.json
 
 ## Official packet
 
