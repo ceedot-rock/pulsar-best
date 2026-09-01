@@ -1,6 +1,8 @@
-# pulsar-best 2.4.0
+# pulsar
 
 Own-only lossless compressor. **Core-Lite.** Public source for official benches.
+
+Public name is **pulsar**. The GitHub repo is still `ceedot-rock/pulsar-best`.
 
 Copyright (c) 2026 Corey Tasz / Slid Phi Labs.
 
@@ -24,11 +26,9 @@ This tree is **GPL-3.0-or-later** from 2.4.0 (MIT through 2.3.1). Closed-source 
 
 ## Official packet
 
-See [OFFICIAL/](OFFICIAL/). Silesia OSCB line for the 2.3.1 measurement (same codec path):
+See [OFFICIAL/](OFFICIAL/). Do not send a Mahoney line until the live bench beats the last public total. When we do, the table name is **pulsar**, not pulsar-best.
 
-```
-56654942 2907 18482 2647 1886 2936 2947 1307 4719 5121 8948 4276 473  pulsar-best 2.3.1
-```
+Last full Silesia (2.5.0): **55,745,438** / 211,938,580. gzip-9 67,631,918. bzip2-9 54,506,769. xz-6 49,408,952.
 
 Industry calibration: gzip -9 = 67,631,990; bzip2 = 54,506,769.
 

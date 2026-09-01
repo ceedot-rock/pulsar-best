@@ -14,7 +14,7 @@ pub mod inhibitor;
 pub mod trufold;
 pub mod zpaq_fixed;
 pub mod bwt_ans;
-pub const VERSION: &str = "2.3.1-PULSAR-BEST";
+pub const VERSION: &str = "2.5.0";
 pub const LOCK_DICKENS_REF: u32 = 243675;
 pub fn version() -> &'static str { VERSION }
 fn verified(raw: &[u8], blob: Vec<u8>) -> Option<Vec<u8>> {
@@ -27,8 +27,11 @@ fn verified(raw: &[u8], blob: Vec<u8>) -> Option<Vec<u8>> {
 
 pub fn pulsar_encode(data: &[u8]) -> Option<Vec<u8>> {
     let mut cand: Vec<Vec<u8>> = Vec::new();
-    if let Some(e) = own_lz::own_lz_encode(data) {
-        if let Some(ok) = verified(data, e) { cand.push(ok); }
+    // OZL2 never won Silesia/Calgary vs BW; skip the slow matcher on large files.
+    if data.len() < 256 * 1024 {
+        if let Some(e) = own_lz::own_lz_encode(data) {
+            if let Some(ok) = verified(data, e) { cand.push(ok); }
+        }
     }
     // PZ22 is a residual wrapper; skip on large files (never won vs OZL2 on Silesia/Calgary).
     if data.len() < 64 * 1024 {
@@ -48,7 +51,7 @@ pub fn pulsar_decode(data: &[u8]) -> Result<Vec<u8>, &'static str> {
     if data.len() >= 4 && &data[..4] == zpaq_fixed::MAGIC {
         return zpaq_fixed::decompress_fixed(data);
     }
-    if data.len() >= 4 && &data[..4] == bwt_ans::MAGIC {
+    if data.len() >= 4 && (&data[..4] == bwt_ans::MAGIC || &data[..4] == bwt_ans::MAGIC22) {
         return bwt_ans::decompress(data);
     }
     if data.len() >= 4 && &data[..4] == own_lz::OZL2_MAGIC {

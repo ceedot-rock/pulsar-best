@@ -3,7 +3,7 @@ use std::time::Instant;
 use pulsar::{pulsar_decode, pulsar_encode, version};
 
 fn print_usage() {
-    eprintln!("PULSAR-BEST {}", version());
+    eprintln!("pulsar {}", version());
     eprintln!("Usage:");
     eprintln!("  pulsar encode <input> [-o <output.pulsar>]");
     eprintln!("  pulsar decode <input.pulsar> [-o <output>]");

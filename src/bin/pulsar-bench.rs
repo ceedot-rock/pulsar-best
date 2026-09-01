@@ -8,6 +8,7 @@ fn magic_of(blob: &[u8]) -> &'static str {
     if blob.len() >= 4 {
         match &blob[..4] {
             b"BW22" => "BW22",
+            b"BW23" => "BW23",
             b"OZL2" => "OZL2",
             b"PZ22" => "PZ22",
             _ => "????",
@@ -26,7 +27,7 @@ fn main() {
     let file = &args[1];
     let only_bw = args.get(2).map(|s| s=="bw").unwrap_or(false);
     let data = fs::read(file).expect("read file");
-    println!("PULSAR-BEST {}  file={} raw={}", version(), file, data.len());
+    println!("pulsar {}  file={} raw={}", version(), file, data.len());
 
     let t0 = Instant::now();
     let bw = bwt_ans::compress(&data);

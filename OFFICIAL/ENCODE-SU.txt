@@ -1,16 +1,18 @@
-pulsar-best 2.3.1 — Silesia own-only
+pulsar — Silesia own-only (draft)
 
-Source (MIT): https://github.com/ceedot-rock/pulsar-best
+Public name: pulsar
+Repo: https://github.com/ceedot-rock/pulsar-best
+License: GPL-3.0-or-later from 2.4.0 (MIT through 2.3.1)
 
-Silesia 12-file, compressed individually, DECODE_OK 12/12:
+HOLD: do not submit until the live total beats 55,745,438.
 
-56654942 2907 18482 2647 1886 2936 2947 1307 4719 5121 8948 4276 473  pulsar-best 2.3.1
+Last full run 2.5.0 (2026-09-01), DECODE_OK 12/12:
+55745438 2834 18110 2596 1764 2950 2844 1331 4699 5150 8678 4307 478  pulsar 2.5.0
 
-56,654,942 / 211,938,580 (0.2673).
-gzip-9 67,631,990 (12/12 win, matches Mahoney).
-bzip2-9 54,506,769 (0/12, +3.94%).
+Exact: 55,745,438 / 211,938,580 (0.2630).
+gzip-9 67,631,918 (12/12 win).
+bzip2-9 54,506,769 (lose, +1.24M).
+xz-6 49,408,952 (lose, +6.34M).
 
-Not a claim vs paq8px / cmix / zpaq-m5.
-AWARE+XZ1 47,752,368 is a disclosed host-xz wrap, not this crate.
-
-Submitted to Mahoney OSCB 2026-08-31.
+Not a claim vs paq8px / cmix / zpaq.
+Combined GC / AWARE are not this crate.

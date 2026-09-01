@@ -1,11 +1,30 @@
-//! BW22 nominal entropy.
-//! Pipeline: RLE-1 + BWT + MTF + Wheeler RLE-0 + order-0 rANS (one table).
-//! No extra context levels, no piecewise, no unmix, no MTF-1.
+//! BW23: RLE-1 + BWT + MTF + Wheeler RLE-0 + 4-ctx rANS.
+//! Contexts: RUNA / RUNB / small-MTF / rest. Adaptive block size.
+//! BW22 (order-0) still decodes.
 
 use crate::bwt;
 
-pub const MAGIC: &[u8; 4] = b"BW22";
+pub const MAGIC: &[u8; 4] = b"BW23";
+pub const MAGIC22: &[u8; 4] = b"BW22";
 pub const BLOCK: usize = 900 * 1024;
+const NCTX: usize = 4;
+
+fn block_size_for(n: usize) -> usize {
+    if n >= 8 * 1024 * 1024 {
+        2 * 1024 * 1024
+    } else {
+        BLOCK
+    }
+}
+
+fn tok_ctx(t: u16) -> usize {
+    match t {
+        0 => 0,
+        1 => 1,
+        2..=16 => 2,
+        _ => 3,
+    }
+}
 
 const RANS_L: u64 = 1 << 23;
 const SCALE_BITS: u32 = 12; // nominal, same as crate::ans
@@ -157,6 +176,7 @@ impl RansEnc {
     fn flush(&self, out: &mut Vec<u8>) { out.extend_from_slice(&self.state.to_le_bytes()); }
 }
 
+#[allow(dead_code)]
 fn rans0_encode(data: &[u16]) -> Vec<u8> {
     let mut counts = [0u32; NSYM];
     for &b in data {
@@ -237,12 +257,134 @@ fn rans0_decode(buf: &[u8]) -> Result<Vec<u16>, &'static str> {
     Ok(out)
 }
 
+fn rans4_encode(data: &[u16]) -> Vec<u8> {
+    let mut counts = [[0u32; NSYM]; NCTX];
+    let mut ctxs = vec![0usize; data.len()];
+    let mut ctx = 0usize;
+    for (i, &b) in data.iter().enumerate() {
+        ctxs[i] = ctx;
+        let s = b as usize;
+        if s < NSYM {
+            counts[ctx][s] += 1;
+        }
+        ctx = tok_ctx(b);
+    }
+    let mut tables = [( [0u32; NSYM], [0u32; NSYM] ); NCTX];
+    for c in 0..NCTX {
+        tables[c] = normalize(&counts[c]);
+    }
+    let mut enc = RansEnc::new();
+    let mut stream = Vec::with_capacity(data.len() / 2 + 16);
+    for i in (0..data.len()).rev() {
+        let s = data[i] as usize;
+        let c = ctxs[i];
+        enc.encode(tables[c].0[s], tables[c].1[s], SCALE, &mut stream);
+    }
+    enc.flush(&mut stream);
+    let mut out = Vec::new();
+    out.extend_from_slice(&(data.len() as u32).to_le_bytes());
+    out.push(SCALE_BITS as u8);
+    out.push(NCTX as u8);
+    for c in 0..NCTX {
+        let freq = &tables[c].0;
+        let used: Vec<(u16, u16)> = (0..NSYM)
+            .filter(|&s| freq[s] > 0)
+            .map(|s| (s as u16, freq[s] as u16))
+            .collect();
+        out.extend_from_slice(&(used.len() as u16).to_le_bytes());
+        for (s, f) in used {
+            out.extend_from_slice(&s.to_le_bytes());
+            out.extend_from_slice(&f.to_le_bytes());
+        }
+    }
+    out.extend_from_slice(&(stream.len() as u32).to_le_bytes());
+    out.extend_from_slice(&stream);
+    out
+}
+
+fn rans4_decode(buf: &[u8]) -> Result<Vec<u16>, &'static str> {
+    if buf.len() < 4 + 1 + 1 + 4 + 8 {
+        return Err("ans4 short");
+    }
+    let orig_len = u32::from_le_bytes(buf[0..4].try_into().unwrap()) as usize;
+    if buf[4] as u32 != SCALE_BITS {
+        return Err("ans4 scale");
+    }
+    if buf[5] as usize != NCTX {
+        return Err("ans4 nctx");
+    }
+    let mut pos = 6usize;
+    let mut freq = [[0u32; NSYM]; NCTX];
+    let mut start = [[0u32; NSYM]; NCTX];
+    for c in 0..NCTX {
+        if pos + 2 > buf.len() {
+            return Err("ans4 tbl");
+        }
+        let nused = u16::from_le_bytes(buf[pos..pos + 2].try_into().unwrap()) as usize;
+        pos += 2;
+        for _ in 0..nused {
+            if pos + 4 > buf.len() {
+                return Err("ans4 row");
+            }
+            let s = u16::from_le_bytes(buf[pos..pos + 2].try_into().unwrap()) as usize;
+            let f = u16::from_le_bytes(buf[pos + 2..pos + 4].try_into().unwrap()) as u32;
+            if s >= NSYM {
+                return Err("ans4 sym");
+            }
+            freq[c][s] = f;
+            pos += 4;
+        }
+        let mut run = 0u32;
+        for s in 0..NSYM {
+            start[c][s] = run;
+            run += freq[c][s];
+        }
+        if run != SCALE {
+            return Err("ans4 sum");
+        }
+    }
+    if pos + 4 > buf.len() {
+        return Err("ans4 slen");
+    }
+    let slen = u32::from_le_bytes(buf[pos..pos + 4].try_into().unwrap()) as usize;
+    pos += 4;
+    if pos + slen > buf.len() {
+        return Err("ans4 stream");
+    }
+    let stream = &buf[pos..pos + slen];
+    if slen < 8 {
+        return Err("ans4 state");
+    }
+    let mut state = u64::from_le_bytes(stream[slen - 8..].try_into().unwrap());
+    let mut cursor = slen - 8;
+    let mask = (SCALE - 1) as u64;
+    let mut out = vec![0u16; orig_len];
+    let mut ctx = 0usize;
+    for i in 0..orig_len {
+        let slot = (state & mask) as u32;
+        let s = find_sym(slot, &freq[ctx], &start[ctx]);
+        out[i] = s;
+        let f = freq[ctx][s as usize] as u64;
+        let cum = start[ctx][s as usize] as u64;
+        state = f * (state >> SCALE_BITS) + (state & mask) - cum;
+        while state < RANS_L {
+            if cursor == 0 {
+                return Err("ans4 underrun");
+            }
+            cursor -= 1;
+            state = (state << 8) | stream[cursor] as u64;
+        }
+        ctx = tok_ctx(s);
+    }
+    Ok(out)
+}
+
 fn encode_block(block: &[u8]) -> Vec<u8> {
     let pre = rle1_encode(block);
     let (l, primary) = bwt::bwt_encode(&pre);
     let mtf = mtf_encode(&l);
     let wh = wheeler_encode(&mtf);
-    let coded = rans0_encode(&wh);
+    let coded = rans4_encode(&wh);
     let mut out = Vec::with_capacity(16 + coded.len());
     out.extend_from_slice(&(block.len() as u32).to_le_bytes());
     out.extend_from_slice(&(pre.len() as u32).to_le_bytes());
@@ -252,7 +394,7 @@ fn encode_block(block: &[u8]) -> Vec<u8> {
     out
 }
 
-fn decode_block(buf: &[u8], pos: &mut usize) -> Result<Vec<u8>, &'static str> {
+fn decode_block(buf: &[u8], pos: &mut usize, use4: bool) -> Result<Vec<u8>, &'static str> {
     if *pos + 16 > buf.len() { return Err("bw22 blk hdr"); }
     let raw_len = u32::from_le_bytes(buf[*pos..*pos + 4].try_into().unwrap()) as usize;
     let pre_len = u32::from_le_bytes(buf[*pos + 4..*pos + 8].try_into().unwrap()) as usize;
@@ -262,7 +404,11 @@ fn decode_block(buf: &[u8], pos: &mut usize) -> Result<Vec<u8>, &'static str> {
     if *pos + clen > buf.len() { return Err("bw22 blk body"); }
     let coded = &buf[*pos..*pos + clen];
     *pos += clen;
-    let wh = rans0_decode(coded)?;
+    let wh = if use4 {
+        rans4_decode(coded)?
+    } else {
+        rans0_decode(coded)?
+    };
     let mtf = wheeler_decode(&wh, pre_len)?;
     if mtf.len() != pre_len { return Err("bw22 mtf len"); }
     let l = mtf_decode(&mtf);
@@ -274,23 +420,30 @@ fn decode_block(buf: &[u8], pos: &mut usize) -> Result<Vec<u8>, &'static str> {
 }
 
 pub fn compress(src: &[u8]) -> Vec<u8> {
+    let blk = block_size_for(src.len());
     let mut out = Vec::from(*MAGIC);
     out.extend_from_slice(&(src.len() as u32).to_le_bytes());
-    out.extend_from_slice(&(BLOCK as u32).to_le_bytes());
+    out.extend_from_slice(&(blk as u32).to_le_bytes());
     if src.is_empty() { return out; }
-    for chunk in src.chunks(BLOCK) {
+    for chunk in src.chunks(blk) {
         out.extend_from_slice(&encode_block(chunk));
     }
     out
 }
 
 pub fn decompress(src: &[u8]) -> Result<Vec<u8>, &'static str> {
-    if src.len() < 12 || &src[..4] != MAGIC { return Err("bw22 magic"); }
+    if src.len() < 12 {
+        return Err("bw magic");
+    }
+    if &src[..4] != MAGIC && &src[..4] != MAGIC22 {
+        return Err("bw22 magic");
+    }
     let raw_len = u32::from_le_bytes(src[4..8].try_into().unwrap()) as usize;
+    let use4 = &src[..4] == MAGIC;
     let mut pos = 12usize;
     let mut out = Vec::with_capacity(raw_len);
     while out.len() < raw_len {
-        out.extend_from_slice(&decode_block(src, &mut pos)?);
+        out.extend_from_slice(&decode_block(src, &mut pos, use4)?);
     }
     if out.len() != raw_len { return Err("bw22 total"); }
     Ok(out)
@@ -315,5 +468,9 @@ mod tests {
     #[test] fn rans0_loop() {
         let d: Vec<u16> = (0..4000).map(|i| if i % 3 == 0 { 0 } else { (i % 17) as u16 }).collect();
         assert_eq!(rans0_decode(&rans0_encode(&d)).unwrap(), d);
+    }
+    #[test] fn rans4_loop() {
+        let d: Vec<u16> = (0..4000).map(|i| if i % 3 == 0 { 0 } else { (i % 17) as u16 }).collect();
+        assert_eq!(rans4_decode(&rans4_encode(&d)).unwrap(), d);
     }
 }

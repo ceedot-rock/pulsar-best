@@ -1,45 +1,41 @@
-Silesia Open Source Compression Benchmark submission
+Silesia Open Source Compression Benchmark — draft only
 https://mattmahoney.net/dc/silesia.html
 
-Program: pulsar-best 2.3.1
+Program: pulsar
 Source:  https://github.com/ceedot-rock/pulsar-best
-License: MIT
+License: GPL-3.0-or-later (2.4.0+). 2.3.1 and earlier were MIT.
 Author:  Corey Tasz (ceedot-rock / Slid Phi Labs)
-Date:    2026-08-31
-Host:    Linux x86_64 (measurement 2026-08-30)
+Host:    Linux x86_64
 Corpus:  Silesia 12 files, compressed individually
 Raw:     211938580 bytes
-Total:   56654942 bytes
-Options: default encode (min of verified OZL2 / PZ22<64KiB / BW22)
-DECODE:  lossless, 12/12
 
-Mahoney table line (total bytes, then per-file KB truncated last 3 digits,
-order: dicke mozil mr nci ooff osdb reym samba sao webst x-ray xml):
+DO NOT SUBMIT this packet until the live total beats 55,745,438
+and is competitive with bzip2-9 (54,506,769) / xz-6 (~49.4M).
+Public table name is pulsar, never pulsar-best.
 
-56654942 2907 18482 2647 1886 2936 2947 1307 4719 5121 8948 4276 473  pulsar-best 2.3.1
+Last measured (2.5.0, 2026-09-01, DECODE_OK 12/12):
 
-Exact per-file bytes (DECODE_OK):
+  xml      5345280 ->    478360
+  ooffice  6152192 ->   2950568
+  reymont  6627202 ->   1331009
+  sao      7251944 ->   5150474
+  x-ray    8474240 ->   4307052
+  mr       9970564 ->   2596170
+  osdb    10085684 ->   2844929
+  dickens 10192446 ->   2834360
+  samba   21606400 ->   4699263
+  nci     33553445 ->   1764304
+  webster 41458703 ->   8678436
+  mozilla 51220480 ->  18110513
+  TOTAL  211938580 ->  55745438
 
-  xml      5345280 ->   473150
-  ooffice  6152192 ->  2936768
-  reymont  6627202 ->  1307469
-  sao      7251944 ->  5121635
-  x-ray    8474240 ->  4276720
-  mr       9970564 ->  2647404
-  osdb    10085684 ->  2947692
-  dickens 10192446 ->  2907619
-  samba   21606400 ->  4719479
-  nci     33553445 ->  1886804
-  webster 41458703 ->  8948058
-  mozilla 51220480 -> 18482144
-  TOTAL  211938580 -> 56654942
+Mahoney table line (when submitting):
 
-Reference check on the same files (industry, match Mahoney where listed):
+55745438 2834 18110 2596 1764 2950 2844 1331 4699 5150 8678 4307 478  pulsar 2.5.0
 
-  gzip -9     67631990   (Mahoney gzip -9 = 67631990, exact match)
-  bzip2 -9    54506769   (Mahoney bzip2   = 54506769, exact match)
+Same-host references: gzip -9 67631918; bzip2-9 54506769; xz -6 49408952.
 
-Beats gzip 12/12. Loses to bzip2 12/12 (+2148173, +3.94%).
+Beats gzip 12/12. Loses to bzip2 (+1.24M). Loses to xz (+6.34M).
 Not a rank claim against paq8px / cmix / zpaq.
 
 Build:
