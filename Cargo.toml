@@ -1,9 +1,10 @@
 [package]
 name = "pulsar"
-version = "2.3.1"
+version = "2.4.0"
 edition = "2021"
-description = "pulsar-best 2.3.1 own-only lossless compressor"
-license = "MIT"
+description = "pulsar-best 2.4.0 own-only lossless compressor (Core-Lite)"
+license = "GPL-3.0-or-later"
+authors = ["Corey Tasz <Slid Phi Labs>"]
 publish = false
 
 [lib]
