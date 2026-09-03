@@ -6,8 +6,8 @@ Public name is **pulsar**. The GitHub repo is still `ceedot-rock/pulsar-best`.
 
 Copyright (c) 2026 Corey Tasz / Slid Phi Labs.
 
-**Silesia (12 files, individually):** **56,654,942** bytes of 211,938,580 (0.2673).  
-DECODE_OK 12/12. Beats gzip-9 12/12. Loses to bzip2-9 12/12 (+3.94%).
+**Silesia (12 files, individually):** **55,745,438** bytes of 211,938,580 (0.2630).  
+DECODE_OK 12/12. Beats gzip-9 12/12. Loses to bzip2-9 (+1.24M) and xz-6 (+6.3M).
 
 Not a rank claim against paq8px, cmix, or zpaq. Combined GC and AWARE are **not in this repo**.
 
@@ -26,9 +26,9 @@ This tree is **GPL-3.0-or-later** from 2.4.0 (MIT through 2.3.1). Closed-source 
 
 ## Official packet
 
-See [OFFICIAL/](OFFICIAL/). Do not send a Mahoney line until the live bench beats the last public total. When we do, the table name is **pulsar**, not pulsar-best.
+See [OFFICIAL/](OFFICIAL/). 2.5.0 (55,745,438) was emailed to Matt Mahoney for OSCB on 2026-09-02. Do not send another line until a live total beats that. Table name is **pulsar**, not pulsar-best.
 
-Last full Silesia (2.5.0): **55,745,438** / 211,938,580. gzip-9 67,631,918. bzip2-9 54,506,769. xz-6 49,408,952.
+Last full Silesia (2.5.0): **55,745,438** / 211,938,580. gzip-9 67,631,990. bzip2-9 54,506,769. xz-6 ~49.4M.
 
 Industry calibration: gzip -9 = 67,631,990; bzip2 = 54,506,769.
 
