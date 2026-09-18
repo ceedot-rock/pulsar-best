@@ -9,7 +9,7 @@ Copyright (c) 2026 Corey Tasz / Slid Phi Labs.
 **Silesia (12 files, individually):** **55,745,438** bytes of 211,938,580 (0.2630).  
 DECODE_OK 12/12. Beats gzip-9 12/12. Loses to bzip2-9 (+1.24M) and xz-6 (+6.3M).
 
-Not a rank claim against paq8px, cmix, or zpaq. Combined GC and AWARE are **not in this repo**.
+Not a rank claim against paq8px, cmix, or zpaq. This is **not** the hosted **PCC** product. AWARE is a retired alias. The private encoder is not in this tree.
 
 ## What this is
 
@@ -17,12 +17,12 @@ Compressor A (demonstrator). BW22 / OZL2 / PZ22 picker. No taught residual core.
 
 ## What this is not
 
-- Not Combined GC
-- Not AWARE 1.19.2
+- Not the hosted PCC product
+- Not a retired AWARE SKU
 - Not the Drive-lock encoder (dickens 243,675 is a reference constant, not this output)
 - Not Autonoma / Blackjack production
 
-This tree is **GPL-3.0-or-later** from 2.4.0 (MIT through 2.3.1). Closed-source embedding: [COMMERCIAL.md](COMMERCIAL.md). Combined GC / AWARE stay proprietary. Commercial inquiries for the private engines: Slid Phi Labs / Corey Tasz. SoT: https://www.slidphilabs.com/licensing.json
+This tree is **GPL-3.0-or-later** from 2.4.0 (MIT through 2.3.1). Closed-source embedding: [COMMERCIAL.md](COMMERCIAL.md). The private encoder stays proprietary. Commercial inquiries: Slid Phi Labs / Corey Tasz. Licensing: https://www.slidphilabs.com/licensing.json
 
 ## Official packet
 
