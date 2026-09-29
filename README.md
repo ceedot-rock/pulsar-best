@@ -30,6 +30,8 @@ See [OFFICIAL/](OFFICIAL/). 2.5.0 (55,745,438) was emailed to Matt Mahoney for O
 
 Last full Silesia (2.5.0): **55,745,438** / 211,938,580. gzip-9 67,631,990. bzip2-9 54,506,769. xz-6 ~49.4M.
 
+Note: `BENCH_SILESIA_CALGARY.csv`'s per-file `pulsar` column is the 2.3.0 breakdown (sums to 56,654,942) and was never refreshed for 2.5.0 — the 55,745,438 headline is the externally verified OSCB submission, not reproducible from that CSV.
+
 Industry calibration: gzip -9 = 67,631,990; bzip2 = 54,506,769.
 
 ## Build

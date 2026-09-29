@@ -2,7 +2,6 @@
 pub mod ans;
 pub mod ans_fast;
 pub mod bwt;
-pub mod bwt_big;
 pub mod text_detect;
 pub mod match_maker;
 pub mod lz_opt;
@@ -10,7 +9,6 @@ pub mod lz_full;
 pub mod own_lz;
 pub mod own_lz_fast;
 pub mod zrw;
-pub mod inhibitor;
 pub mod trufold;
 pub mod zpaq_fixed;
 pub mod bwt_ans;
