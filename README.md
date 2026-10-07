@@ -1,5 +1,8 @@
 # pulsar
 
+[![Audited checks](https://github.com/ceedot-rock/pulsar-best/actions/workflows/audited-checks.yml/badge.svg)](https://github.com/ceedot-rock/pulsar-best/actions/workflows/audited-checks.yml)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](./LICENSE)
+
 Own-only lossless compressor. **Core-Lite.** Public source for official benches.
 
 Public name is **pulsar**. The GitHub repo is still `ceedot-rock/pulsar-best`.
