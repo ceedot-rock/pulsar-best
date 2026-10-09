@@ -3,6 +3,13 @@
 [![Audited checks](https://github.com/ceedot-rock/pulsar-best/actions/workflows/audited-checks.yml/badge.svg)](https://github.com/ceedot-rock/pulsar-best/actions/workflows/audited-checks.yml)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](./LICENSE)
 
+**pulsar** is a free local lossless compressor from Slid Phi Labs — for anyone
+who wants an open, inspectable best-path compressor on their own machine: no
+hosted service, no license gate to run it. On the 12-file Silesia corpus it
+packs to 55,745,438 bytes (decode+SHA verified 12/12), beating gzip -9 and
+losing to bzip2 -9 and xz -6 — an honest mid-field demo of the lab's compression
+work, not the hosted PCC product. GPL-3.0-or-later.
+
 Own-only lossless compressor. **Core-Lite.** Public source for official benches.
 
 Public name is **pulsar**. The GitHub repo is still `ceedot-rock/pulsar-best`.
@@ -49,3 +56,13 @@ cargo run --release --bin pulsar -- decode OUT -o BACK
 
 **2.4.0+ : GPL-3.0-or-later.**  
 2.3.1 and earlier snapshots remain MIT. See `LICENSE` and `LICENSE-CHANGE.md`.
+
+## From the same lab
+
+- **TNSSRC** — local lossless compression engine (Silesia 43,724,575 bytes, 12/12 decode+SHA verified): https://github.com/ceedot-rock/neural-pcc
+- **TRUSTREAM** — lossless compression for live data streams in 4 KiB tiles: https://github.com/ceedot-rock/trustream
+- **AwLPay** — multi-rail agent payments (USDC x402 on Base and Solana, PayPal sandbox bridge): https://github.com/ceedot-rock/awlpay
+- **agenTill** — drop-in payment box that turns any online product into a storefront agents can buy from: https://github.com/ceedot-rock/agenTill
+- **ExactOdds** — provably-fair game math, byte-identical rules across five languages: https://github.com/ceedot-rock/exactodds
+- **Chamber** — two-key JSON sealing for secrets: https://github.com/ceedot-rock/json-chamber-sdk
+- Lab site: https://www.slidphilabs.com · Licensing: https://www.slidphilabs.com/licensing.json
